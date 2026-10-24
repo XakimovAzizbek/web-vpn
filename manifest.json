@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "Country Proxy VPN",
+  "version": "1.0",
+  "description": "Tanlangan davlat proksisi orqali saytga kiradi.",
+  "permissions": [
+    "proxy",
+    "storage",
+    "tabs",
+    "scripting"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Proxy VPN"
+  },
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}

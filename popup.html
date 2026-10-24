@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Country Proxy VPN</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="container">
+        <h2>🌍 Proksi orqali saytga kirish</h2>
+        <p class="subtitle">Avval regionni tanlang, keyin sayt manzilini kiriting.</p>
+
+        <div class="step">
+            <label for="region">1. Regionni tanlang:</label>
+            <select id="region">
+                <option value="">— Tanlang —</option>
+                <option value="DE">🇩🇪 Germaniya</option>
+                <option value="US">🇺🇸 AQSH</option>
+                <option value="GB">🇬🇧 Buyuk Britaniya</option>
+                <option value="FR">🇫🇷 Fransiya</option>
+                <option value="NL">🇳🇱 Niderlandiya</option>
+                <option value="TR">🇹🇷 Turkiya</option>
+                <option value="RU">🇷🇺 Rossiya</option>
+                <option value="JP">🇯🇵 Yaponiya</option>
+            </select>
+        </div>
+
+        <div class="step hidden" id="step-url">
+            <label for="url">2. Sayt manzilini kiriting:</label>
+            <input type="url" id="url" placeholder="https://example.com" autocomplete="off">
+            <button id="open-btn">🔓 Ochish</button>
+        </div>
+
+        <div id="status" class="status hidden"></div>
+
+        <button id="clear-btn" class="clear-btn hidden">🔄 Proksini o‘chirish</button>
+
+        <p class="note">
+            ⚠️ Eslatma: Bu kengaytma faqat brauzer trafigini proksiga yo‘naltiradi.
+            Ochiq proksilar beqaror bo‘lishi mumkin.
+        </p>
+    </div>
+    <script src="popup.js"></script>
+</body>
+</html>
