@@ -3,51 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brauzer Proksi — Region tanlash</title>
-    <link rel="stylesheet" href="index.css">
+    <title>Mening Proksi Loyiham</title>
+    <style>
+        body { font-family: sans-serif; background: #0f172a; color: white; padding: 20px; text-align: center; }
+        .box { background: #1e293b; padding: 20px; border-radius: 12px; max-width: 400px; margin: auto; }
+        select, input, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #475569; box-sizing: border-box; font-size: 16px; }
+        select, input { background: #0f172a; color: white; }
+        button { background: #38bdf8; color: black; font-weight: bold; cursor: pointer; }
+        button:disabled { background: #475569; cursor: not-allowed; }
+        #status { margin-top: 15px; color: #fca5a5; font-weight: bold; word-break: break-word; }
+        iframe { width: 100%; height: 400px; margin-top: 20px; background: white; border: none; border-radius: 8px; display: none; }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🌍 Proksi orqali saytga kirish</h1>
-        <p class="subtitle">Avval regionni tanlang, keyin sayt manzilini kiriting.</p>
+    <div class="box">
+        <h2>🌍 Proksi Loyiham</h2>
+        
+        <label>1. Regionni tanlang:</label>
+        <select id="region">
+            <option value="DE">🇩🇪 Germaniya</option>
+            <option value="US">🇺🇸 AQSH</option>
+            <option value="FR">🇫🇷 Fransiya</option>
+        </select>
 
-        <!-- 1-qadam: Region tanlash -->
-        <div class="step" id="step-region">
-            <label for="region">1. Regionni tanlang:</label>
-            <select id="region">
-                <option value="">— Tanlang —</option>
-                <option value="DE">🇩🇪 Germaniya</option>
-                <option value="US">🇺🇸 AQSH</option>
-                <option value="GB">🇬🇧 Buyuk Britaniya</option>
-                <option value="FR">🇫🇷 Fransiya</option>
-                <option value="NL">🇳🇱 Niderlandiya</option>
-                <option value="TR">🇹🇷 Turkiya</option>
-                <option value="RU">🇷🇺 Rossiya</option>
-                <option value="JP">🇯🇵 Yaponiya</option>
-            </select>
-        </div>
+        <label>2. Sayt manzili:</label>
+        <input type="url" id="url" placeholder="https://mylocation.org" required>
 
-        <!-- 2-qadam: URL kiritish (region tanlanmaguncha yashirin) -->
-        <div class="step hidden" id="step-url">
-            <label for="url">2. Sayt manzilini kiriting:</label>
-            <input type="url" id="url" placeholder="https://example.com" autocomplete="off">
-            <button id="open-btn">🔓 Ochish</button>
-        </div>
-
-        <!-- Natija / Xatolik -->
-        <div id="status" class="status hidden"></div>
-
-        <!-- Natija oynasi -->
-        <div id="result-container" class="hidden">
-            <h3>Natija:</h3>
-            <iframe id="result-frame" sandbox="allow-scripts allow-same-origin"></iframe>
-        </div>
-
-        <p class="note">
-            ⚠️ Eslatma: Brauzer xavfsizligi sababli to‘liq sahifani proksi orqali ochish cheklangan.
-            Ushbu demo API so‘rovlari uchun proksidan foydalanadi.
-        </p>
+        <button id="openBtn">🔓 Ochish</button>
+        <div id="status"></div>
+        <iframe id="resultFrame" sandbox="allow-scripts allow-same-origin"></iframe>
     </div>
-    <script src="index.js"></script>
+
+    <script>
+        // ⚠️ BU YERGA KEYINROQ CLOUDFLARE WORKER MANZILINI QO'YASIZ
+        const WORKER_URL = "https://webvpn.snip-dev.workers.dev/";
+
+        document.getElementById('openBtn').addEventListener('click', async () => {
+            const region = document.getElementById('region').value;
+            const url = document.getElementById('url').value;
+            const status = document.getElementById('status');
+            const btn = document.getElementById('openBtn');
+            const iframe = document.getElementById('resultFrame');
+
+            if (!url) {
+                status.innerText = "Iltimos, sayt manzilini kiriting!";
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = "⏳ Yuklanmoqda...";
+            status.innerText = `🌐 ${region} regioni orqali ulanmoqda...`;
+            iframe.style.display = "none";
+
+            try {
+                const response = await fetch(WORKER_URL + encodeURIComponent(url));
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP xatolik: ${response.status}`);
+                }
+
+                const htmlText = await response.text();
+                status.innerText = "✅ Muvaffaqiyatli yuklandi!";
+                iframe.srcdoc = htmlText;
+                iframe.style.display = "block";
+
+            } catch (error) {
+                status.innerText = "❌ Xatolik: " + error.message;
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "🔓 Ochish";
+            }
+        });
+    </script>
 </body>
 </html>
