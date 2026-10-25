@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yuklanmoqda...</title>
+    <style>
+        /* Sahifa to'liq ekran bo'lishi uchun */
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #0f172a; }
+        
+        /* Iframe butun ekranni egallaydi */
+        #fullFrame { width: 100vw; height: 100vh; border: none; display: block; }
+
+        /* Orqaga qaytish tugmasi (suzib yuruvchi) */
+        .back-btn { 
+            position: fixed; 
+            bottom: 20px; 
+            right: 20px; 
+            background: #ef4444; 
+            color: white; 
+            padding: 10px 15px; 
+            border-radius: 30px; 
+            text-decoration: none; 
+            font-family: sans-serif; 
+            font-weight: bold; 
+            font-size: 14px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            z-index: 9999;
+        }
+        
+        /* Yuklanish animatsiyasi */
+        #loading { 
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            color: white; font-family: sans-serif; font-size: 18px; z-index: 1; 
+        }
+    </style>
+</head>
+<body>
+    <div id="loading">⏳ Sayt yuklanmoqda...</div>
+    
+    <!-- Proksi oynasi -->
+    <iframe id="fullFrame"></iframe>
+
+    <!-- Orqaga qaytish uchun -->
+    <a href="index.html" class="back-btn">⬅️ Orqaga</a>
+
+    <script>
+        // SIZNING CLOUDFLARE HAVOLANGIZ (IP ulanishi shu yerda ishlaydi)
+        const WORKER_URL = "https://webvpn.snip-dev.workers.dev/?url=";
+
+        // URL manzildan qaysi saytni ochish kerakligini olamiz
+        const params = new URLSearchParams(window.location.search);
+        const targetUrl = params.get('url');
+
+        if (targetUrl) {
+            const iframe = document.getElementById('fullFrame');
+            const loading = document.getElementById('loading');
+            
+            // Iframe ga Cloudflare Worker orqali manzilni beramiz
+            iframe.src = WORKER_URL + encodeURIComponent(targetUrl);
+            
+            // Sayt yuklanganda "yuklanmoqda" yozuvini o'chiramiz
+            iframe.onload = () => {
+                loading.style.display = 'none';
+                document.title = "Proksi - " + targetUrl;
+            };
+        } else {
+            document.getElementById('loading').innerText = "❌ URL topilmadi!";
+        }
+    </script>
+</body>
+</html>
