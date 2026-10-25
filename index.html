@@ -19,14 +19,12 @@
     <div class="box">
         <h2>🌍 Web Proksi</h2>
         
-        <!-- Faqat URL kiritish joyi qoldi -->
         <input type="url" id="url" placeholder="Sayt manzilini kiriting (https://...)" required>
 
         <button id="openBtn">🔓 Ochish</button>
         <div id="status"></div>
     </div>
     
-    <!-- Natija shu yerda ochiladi -->
     <iframe id="resultFrame"></iframe>
 
     <script>
@@ -48,11 +46,9 @@
             btn.innerText = "⏳ Yuklanmoqda...";
             status.innerText = "";
 
-            // Iframe manzilini proksiga yo'naltiramiz
             iframe.src = WORKER_URL + encodeURIComponent(url);
             iframe.style.display = "block";
             
-            // Yuklanish tugagach tugmani tiklaymiz
             iframe.onload = () => {
                 btn.disabled = false;
                 btn.innerText = "🔓 Ochish";
