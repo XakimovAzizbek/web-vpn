@@ -3,47 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mening Proksi Loyiham</title>
+    <title>WEB VPN</title>
     <style>
-        body { font-family: sans-serif; background: #0f172a; color: white; padding: 20px; text-align: center; }
-        .box { background: #1e293b; padding: 20px; border-radius: 12px; max-width: 400px; margin: auto; }
-        select, input, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #475569; box-sizing: border-box; font-size: 16px; }
-        select, input { background: #0f172a; color: white; }
+        body { font-family: sans-serif; background: #0f172a; color: white; padding: 15px; text-align: center; margin: 0; }
+        .box { background: #1e293b; padding: 20px 15px; border-radius: 12px; max-width: 600px; margin: auto; }
+        input, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #475569; box-sizing: border-box; font-size: 16px; }
+        input { background: #0f172a; color: white; margin-top: 15px; }
         button { background: #38bdf8; color: black; font-weight: bold; cursor: pointer; }
         button:disabled { background: #475569; cursor: not-allowed; }
-        #status { margin-top: 15px; color: #fca5a5; font-weight: bold; word-break: break-word; }
-        iframe { width: 100%; height: 400px; margin-top: 20px; background: white; border: none; border-radius: 8px; display: none; }
+        #status { margin-top: 10px; color: #fca5a5; font-weight: bold; word-break: break-word; }
+        #resultFrame { width: 100%; height: 70vh; margin-top: 15px; background: white; border: none; border-radius: 8px; display: none; }
     </style>
 </head>
 <body>
     <div class="box">
-        <h2>🌍 Proksi Loyiham</h2>
+        <h2>🌍 Web Proksi</h2>
         
-        <label>1. Regionni tanlang:</label>
-        <select id="region">
-            <option value="DE">🇩🇪 Germaniya</option>
-            <option value="US">🇺🇸 AQSH</option>
-            <option value="FR">🇫🇷 Fransiya</option>
-        </select>
-
-        <label>2. Sayt manzili:</label>
-        <input type="url" id="url" placeholder="https://mylocation.org" required>
+        <!-- Faqat URL kiritish joyi qoldi -->
+        <input type="url" id="url" placeholder="Sayt manzilini kiriting (https://...)" required>
 
         <button id="openBtn">🔓 Ochish</button>
         <div id="status"></div>
-        <iframe id="resultFrame" sandbox="allow-scripts allow-same-origin"></iframe>
     </div>
+    
+    <!-- Natija shu yerda ochiladi -->
+    <iframe id="resultFrame"></iframe>
 
     <script>
-        // ⚠️ BU YERGA KEYINROQ CLOUDFLARE WORKER MANZILINI QO'YASIZ
-        const WORKER_URL = "https://webvpn.snip-dev.workers.dev/";
+        // SIZNING CLOUDFLARE HAVOLANGIZ
+        const WORKER_URL = "https://webvpn.snip-dev.workers.dev/?url=";
 
-        document.getElementById('openBtn').addEventListener('click', async () => {
-            const region = document.getElementById('region').value;
+        document.getElementById('openBtn').addEventListener('click', () => {
             const url = document.getElementById('url').value;
             const status = document.getElementById('status');
-            const btn = document.getElementById('openBtn');
             const iframe = document.getElementById('resultFrame');
+            const btn = document.getElementById('openBtn');
 
             if (!url) {
                 status.innerText = "Iltimos, sayt manzilini kiriting!";
@@ -52,27 +46,18 @@
 
             btn.disabled = true;
             btn.innerText = "⏳ Yuklanmoqda...";
-            status.innerText = `🌐 ${region} regioni orqali ulanmoqda...`;
-            iframe.style.display = "none";
+            status.innerText = "";
 
-            try {
-                const response = await fetch(WORKER_URL + encodeURIComponent(url));
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP xatolik: ${response.status}`);
-                }
-
-                const htmlText = await response.text();
-                status.innerText = "✅ Muvaffaqiyatli yuklandi!";
-                iframe.srcdoc = htmlText;
-                iframe.style.display = "block";
-
-            } catch (error) {
-                status.innerText = "❌ Xatolik: " + error.message;
-            } finally {
+            // Iframe manzilini proksiga yo'naltiramiz
+            iframe.src = WORKER_URL + encodeURIComponent(url);
+            iframe.style.display = "block";
+            
+            // Yuklanish tugagach tugmani tiklaymiz
+            iframe.onload = () => {
                 btn.disabled = false;
                 btn.innerText = "🔓 Ochish";
-            }
+                status.innerText = "✅ Sayt ochildi!";
+            };
         });
     </script>
 </body>
